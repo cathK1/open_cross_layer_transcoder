@@ -40,8 +40,8 @@ def main():
     model_name = "gpt2"  # GPT-2 Small
     num_features = 16 * 768
     batch_size = 64
-    num_epochs = 100
-    activation_type = "topk"
+    num_epochs = 200
+    activation_type = "jumprelu"
     topk_features = int(num_features * 0.02)  
 
     # Initialize the cross-layer transcoder
@@ -55,7 +55,7 @@ def main():
 
     dataset = load_dataset("bookcorpus", split="train[:5%]", trust_remote_code=True)
     sentences = [entry["text"] for entry in dataset]
-    train_texts = sentences[:800000]
+    train_texts = sentences[:8000]
     print(f"Loaded {len(train_texts)} training texts: {train_texts[:5]}")
     
 
@@ -73,9 +73,9 @@ def main():
         batch_size=batch_size,
         num_epochs=num_epochs,
         learning_rate=1e-4,
-        l1_sparsity_coefficient=0.0,
+        l1_sparsity_coefficient=0.001,
         lr_scheduler_factor=0.5,      # Reduce LR to 10% of current
-        lr_scheduler_patience=50     # After 7 epochs of no improvement in total_loss
+        lr_scheduler_patience=10     # After 7 epochs of no improvement in total_loss
     )
     
     training_time = time.time() - start_time
